@@ -1,4 +1,5 @@
--- drop DEMO tables from OracleXE (run twice)
+-- drop DEMO tables from OracleXE (run twice) this is optional
+/* 
 DROP TABLE demo_customers;
 DROP TABLE demo_order_items;
 DROP TABLE demo_orders;
@@ -7,6 +8,7 @@ DROP TABLE demo_states;
 DROP TABLE demo_users;
 DROP TABLE dept;
 DROP TABLE emp;
+*/
 
 -- Drop existing tables
 DROP TABLE PROGRAMCOURSE;
@@ -60,7 +62,7 @@ CREATE TABLE STUDENT
   DOB DATE NOT NULL,
     CONSTRAINT STUDENT_PK PRIMARY KEY (STUDENT_ID),
     CONSTRAINT email_ckp CHECK (EMAIL LIKE '%@%.%' AND EMAIL NOT LIKE '@%' AND EMAIL NOT LIKE '%@%@'),
-    CONSTRAINT province_ckp CHECK (PROVINCE IN ('NL', 'PE', 'NS', 'NB', 'QC', 'ON', 'MB', 'SK', 'AB', 'BC'))
+    CONSTRAINT province_ckp CHECK (PROVINCE IN ('NL', 'PE', 'NS', 'NB', 'QC', 'ON', 'MB', 'SK', 'AB', 'BC', 'YT', 'NU', 'NT'))
     --CONSTRAINT zip_code_ckp CHECK (SIZE )
 );
 
@@ -119,5 +121,3 @@ CREATE TABLE PROGRAMCOURSE
     CONSTRAINT PROGRAMCOURSE_PK PRIMARY KEY (PROGRAM_ID, COURSE_ID),
     CONSTRAINT PROGRAM_PC_FK FOREIGN KEY (PROGRAM_ID) REFERENCES PROGRAM(PROGRAM_ID)
 );
-
-
