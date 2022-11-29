@@ -15,6 +15,8 @@ CREATE OR REPLACE PROCEDURE create_student_sp
   p_dob IN STUDENT.DOB%TYPE)
   IS
   p_student_ID NUMBER;
+  CHECK_CONSTRAINT_VIOLATION EXCEPTION;
+  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
   BEGIN
   p_student_ID := STUDENT_ID_SEQ.NEXTVAL;
   INSERT INTO STUDENT (STUDENT_ID,STUDENT_FIRST_NAME,STUDENT_MIDDLE_NAME,STUDENT_LAST_NAME,TELEPHONE,EMAIL,
@@ -22,10 +24,13 @@ CREATE OR REPLACE PROCEDURE create_student_sp
   VALUES(p_student_ID,p_student_first_name,p_student_middle_name,p_student_last_name,p_telephone,p_email,
   p_address,p_province,p_country,p_city,p_zipCode,p_isDomestic,p_identityNo,p_sin,p_dob);
   COMMIT;
-  DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_ID || 'succesfully created to the system.');
+  DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_ID || ' succesfully created to the system.');
   EXCEPTION
  WHEN DUP_VAL_ON_INDEX THEN 
  DBMS_OUTPUT.PUT_LINE('ERROR!!!!!!! CANNOT create new student there is a duplicate value on index');
+ ROLLBACK;
+ WHEN CHECK_CONSTRAINT_VIOLATION THEN
+ DBMS_OUTPUT.PUT_LINE('Create Student failed due to check constraint violation!!!!!');
  ROLLBACK;
  WHEN OTHERS THEN
  DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
@@ -39,9 +44,9 @@ DECLARE
     lv_student_middle_name STUDENT.STUDENT_MIDDLE_NAME%TYPE := '';
     lv_student_last_name STUDENT.STUDENT_LAST_NAME%TYPE := 'PRATHAN';
     lv_telephone STUDENT.TELEPHONE%TYPE :='4326576492';
-    lv_email STUDENT.EMAIL%TYPE := 'ida111@gmail.com';
+    lv_email STUDENT.EMAIL%TYPE := 'id@@a111@gmail.com';
     lv_address STUDENT.ADDRESS%TYPE := '164 Madison Avenue';
-    lv_province STUDENT.PROVINCE%TYPE := 'ON';
+    lv_province STUDENT.PROVINCE%TYPE := 'AN';
     lv_country STUDENT.COUNTRY%TYPE := 'CANADA';
     lv_city STUDENT.CITY%TYPE := 'Toronto';
     lv_zipCode STUDENT.ZIP_CODE%TYPE := 'M4B 1K7';
