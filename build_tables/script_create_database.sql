@@ -7,6 +7,7 @@ DROP SEQUENCE SECTION_ID_SEQ;
 DROP SEQUENCE STUDENT_ID_SEQ;
 
 -- Drop existing tables
+DROP TABLE SECTION_ENROLLMENT;
 DROP TABLE PROGRAM_COURSE;
 DROP TABLE PREREQUISITE;
 DROP TABLE SECTION;
@@ -16,6 +17,9 @@ DROP TABLE PROGRAM;
 DROP TABLE DEPARTMENT;
 DROP TABLE STUDENT;
 
+-- Delete the procedures and functions
+DROP PROCEDURE create_enrollment_sp;
+DROP FUNCTION get_fees;
 
 -- tables creation
 -- Department
@@ -165,6 +169,18 @@ CREATE TABLE PROGRAM_COURSE
     CONSTRAINT PROGRAM_COURSE_PK PRIMARY KEY (PROGRAM_ID, COURSE_ID),
     CONSTRAINT COURSE_PC_FK FOREIGN KEY (COURSE_ID) REFERENCES COURSE(COURSE_ID),
     CONSTRAINT PROGRAM_PC_FK FOREIGN KEY (PROGRAM_ID) REFERENCES PROGRAM(PROGRAM_ID)
+);
+
+CREATE TABLE SECTION_ENROLLMENT
+(
+    SECTION_ID NUMBER,
+    ENROLLMENT_ID NUMBER,
+    CONSTRAINT section_enrollment_pk
+        PRIMARY KEY (SECTION_ID, ENROLLMENT_ID),
+    CONSTRAINT section_id_fk
+        FOREIGN KEY (SECTION_ID) REFERENCES SECTION(SECTION_ID),
+    CONSTRAINT enrollment_id_fk
+        FOREIGN KEY (ENROLLMENT_ID) REFERENCES ENROLLMENT(ENROLLMENT_ID)
 );
 
 COMMIT;
@@ -673,3 +689,99 @@ insert into student (student_id, student_first_name, student_middle_name, studen
 insert into student (student_id, student_first_name, student_middle_name, student_last_name, telephone, email, address, country, province, zip_code, is_domestic, identity_no, SIN, DOB) values (STUDENT_ID_SEQ.nextval, 'Worthy', 'Hersch', 'Booy', '964-132-9971', 'hbooy89@home.pl', '00 Cody Point', 'Indonesia', null, null, 0, '6744327496', '', '01-Aug-1991');
 insert into student (student_id, student_first_name, student_middle_name, student_last_name, telephone, email, address, country, province, zip_code, is_domestic, identity_no, SIN, DOB) values (STUDENT_ID_SEQ.nextval, 'Josie', null, 'Friel', '499-724-7337', 'efriel8a@sina.com.cn', '0 Pearson Point', 'China', null, null, 0, '6104209599', '', '18-Feb-1991');
 insert into student (student_id, student_first_name, student_middle_name, student_last_name, telephone, email, address, country, province, zip_code, is_domestic, identity_no, SIN, DOB) values (STUDENT_ID_SEQ.nextval, 'Lulita', null, 'Rands', '634-442-2225', 'crands8b@cyberchimps.com', '19 Waywood Crossing', 'China', null, null, 0, '6240895024', '', '10-Sep-2004');
+
+-- course table samples
+INSERT INTO COURSE (COURSE_ID, COURSE_NAME, COURSE_CODE, COURSE_DESC, NO_CREDITS)
+    VALUES (COURSE_ID_SEQ.nextval, 'Cheap Databases', 'COMP294', 
+    'How to design and deploy databases for cheap on FB marketplace', 1);
+    
+-- sections table samples
+INSERT INTO SECTION (SECTION_ID, SECTION_TYPE, PROFESSOR_NAME, CAPACITY, COURSE_ID)
+    VALUES (section_id_seq.nextval, 'ONLINE', 'Chayanne', 3, 10);
+INSERT INTO SECTION (SECTION_ID, SECTION_TYPE, PROFESSOR_NAME, CAPACITY, COURSE_ID)
+    VALUES (section_id_seq.nextval, 'IN PERSON', 'Ida Sensei', 3, 10);
+INSERT INTO SECTION (SECTION_ID, SECTION_TYPE, PROFESSOR_NAME, CAPACITY, COURSE_ID)
+    VALUES (section_id_seq.nextval, 'HYBRID', 'Sebas Butler', 3, 10);
+    
+
+
+/*
+*  Creates the procedures
+*/
+
+/*
+    This procedure creates a new enrollment for a new student
+    By default the value of status must be 0 (pending)
+*/
+
+-- Enrollment_sp
+CREATE OR REPLACE PROCEDURE create_enrollment_sp
+    ( 
+        p_student_id IN ENROLLMENT.STUDENT_ID%TYPE,
+        p_program_id IN ENROLLMENT.PROGRAM_ID%TYPE,
+        p_status IN ENROLLMENT.STATUS%TYPE,
+        p_current_term IN ENROLLMENT.CURRENT_TERM%TYPE,
+        p_enrollment_date IN ENROLLMENT.ENROLL_DATE%TYPE,
+        p_total_fees IN ENROLLMENT.TOTAL_FEES%TYPE
+    )
+IS
+    p_ENROLLMENT_ID NUMBER;
+BEGIN
+    p_ENROLLMENT_ID := ENROLLMENT_ID_SEQ.NEXTVAL;
+    INSERT INTO ENROLLMENT (ENROLLMENT_ID,STUDENT_ID,PROGRAM_ID,STATUS,CURRENT_TERM,ENROLL_DATE,TOTAL_FEES)
+        VALUES(p_ENROLLMENT_ID,p_student_id,p_program_id,p_status,p_current_term,p_enrollment_date,p_total_fees);
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('ENROLLMENT ID: ' || p_ENROLLMENT_ID || ', STUDENT ID: ' || p_student_id 
+        ||', PROGRAM ID: ' || p_program_id);
+    DBMS_OUTPUT.PUT_LINE('succesfully inserted into the system. :)');
+    EXCEPTION
+        WHEN DUP_VAL_ON_INDEX THEN 
+        DBMS_OUTPUT.PUT_LINE('ERROR in adding new ENROLLMENT with ENROLLMENT_ID '|| p_ENROLLMENT_ID ||' there is a duplicate value on existing table');
+        ROLLBACK;
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error ' || SQLERRM);
+        ROLLBACK;
+END create_ENROLLMENT_sp;
+/
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('procedures completed');
+END;
+/
+
+-- function get_fees(student_id, program_id) returns total_fees of type Number
+CREATE OR REPLACE FUNCTION get_fees (student_id_prt student.student_id%TYPE, 
+                                    program_id_prt program.program_id%TYPE)
+    RETURN NUMBER
+IS
+    lv_is_domestic              NUMBER;
+    lv_program_fees             NUMBER;
+    lv_total_fees               NUMBER;
+    lv_multiplication_factor    NUMBER:=3;
+BEGIN
+    -- get the is_domestic (true=1 or false=0)
+    SELECT  is_domestic
+        INTO    lv_is_domestic
+        FROM    student
+        WHERE   student_id=student_id_prt;
+    -- get the program fees
+    SELECT fees
+        INTO lv_program_fees
+        FROM program
+        WHERE program_id = program_id_prt;
+    -- calculate the total_fees according to domestic
+    IF (lv_is_domestic = 0) THEN
+        lv_total_fees := lv_program_fees * lv_multiplication_factor;
+    ELSE
+        lv_total_fees := lv_program_fees;
+    END IF;
+    RETURN lv_total_fees;
+END;
+/
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('functions completed');
+END;
+/
+
+commit;
