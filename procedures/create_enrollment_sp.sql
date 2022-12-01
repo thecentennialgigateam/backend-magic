@@ -21,12 +21,15 @@ CREATE OR REPLACE PROCEDURE create_enrollment_sp
   DBMS_OUTPUT.PUT_LINE('ENROLLMENT ID: ' || p_ENROLLMENT_ID || ', STUDENT ID: ' || p_student_id 
   ||', PROGRAM ID: ' || p_program_id);
   DBMS_OUTPUT.PUT_LINE('succesfully inserted into the system. :)');
-  EXCEPTION
- WHEN DUP_VAL_ON_INDEX THEN 
- DBMS_OUTPUT.PUT_LINE('ERROR in adding new ENROLLMENT with ENROLLMENT_ID '|| p_ENROLLMENT_ID ||' there is a duplicate value on existing table');
- ROLLBACK;
- WHEN OTHERS THEN
- DBMS_OUTPUT.PUT_LINE('Error ' || SQLERRM);
+EXCEPTION
+  WHEN DUP_VAL_ON_INDEX THEN 
+    DBMS_OUTPUT.PUT_LINE('ERROR!!!!!!! CANNOT create new enrollment there is a duplicate value on index');
+  ROLLBACK;
+  WHEN CHECK_CONSTRAINT_VIOLATION THEN
+    DBMS_OUTPUT.PUT_LINE('Create enrollment failed due to check constraint violation!!!!!');
+  ROLLBACK;
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
  ROLLBACK;
 END create_ENROLLMENT_sp;
 
