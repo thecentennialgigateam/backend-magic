@@ -1,4 +1,3 @@
-
 --/////////////////////////////////////////////////////////////////////
 
 CREATE OR REPLACE FUNCTION confirm_capacity(section_id_prt  section.section_id%TYPE, 
@@ -68,9 +67,3 @@ BEGIN
     create_enrollment_sp(1105, 311, 0, 1, '1-Sep-2022', get_fees(1105, 311) );
     
 END;
-
-
-
-
-
-
