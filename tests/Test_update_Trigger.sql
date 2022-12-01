@@ -49,3 +49,9 @@ BEGIN
     update_enrollment_sp(10000,1105, 334, 0, 1, '29-Sep-2022', get_fees(1105, 334) );
     
 END;
+
+
+DECLARE
+BEGIN
+DELETE FROM ENROLLMENT WHERE ENROLLMENT_ID=10021;
+END;
