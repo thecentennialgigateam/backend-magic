@@ -51,6 +51,13 @@ BEGIN
     create_enrollment_sp(1695, 326, 0, 1, '15-Nov-2022', get_fees(1695, 326) );
 END;
 
+-- Test function
+
+SELECT get_fees(1310, 451) FROM DUAL;
+SELECT check_capacity(1) FROM DUAL;
+
+-- view data from tables and view
+
 SELECT * from enrollment;
 
 SELECT * FROM student;
