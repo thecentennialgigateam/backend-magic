@@ -29,6 +29,9 @@ DROP PROCEDURE update_student_sp;
 DROP FUNCTION get_fees;
 DROP FUNCTION check_capacity;
 
+-- Config for triggers
+ALTER SESSION SET PLSCOPE_SETTINGS = 'IDENTIFIERS:NONE';
+
 -- tables creation
 -- Department
 CREATE TABLE DEPARTMENT 
@@ -222,6 +225,310 @@ CREATE TABLE SECTION_ENROLLMENT
 );
 
 COMMIT;
+
+
+
+--////////////////////////////PROCEDURES////////////////////////////
+/*
+    This procedure creates a new enrollment for a new student
+    By default the value of status must be 0 (pending)
+*/
+-- Procedure Create Enrollment_sp
+
+CREATE OR REPLACE PROCEDURE create_enrollment_sp
+    ( 
+        p_student_id IN ENROLLMENT.STUDENT_ID%TYPE,
+        p_program_id IN ENROLLMENT.PROGRAM_ID%TYPE,
+        p_status IN ENROLLMENT.STATUS%TYPE,
+        p_current_term IN ENROLLMENT.CURRENT_TERM%TYPE,
+        p_enrollment_date IN ENROLLMENT.ENROLL_DATE%TYPE,
+        p_total_fees IN ENROLLMENT.TOTAL_FEES%TYPE
+    )
+IS
+    p_ENROLLMENT_ID NUMBER;
+BEGIN
+    p_ENROLLMENT_ID := ENROLLMENT_ID_SEQ.NEXTVAL;
+    INSERT INTO ENROLLMENT (ENROLLMENT_ID,STUDENT_ID,PROGRAM_ID,STATUS,CURRENT_TERM,ENROLL_DATE,TOTAL_FEES)
+        VALUES(p_ENROLLMENT_ID,p_student_id,p_program_id,p_status,p_current_term,p_enrollment_date,p_total_fees);
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('ENROLLMENT ID: ' || p_ENROLLMENT_ID || ', STUDENT ID: ' || p_student_id 
+        ||', PROGRAM ID: ' || p_program_id);
+    DBMS_OUTPUT.PUT_LINE('succesfully inserted into the system. :)');
+    EXCEPTION
+        WHEN DUP_VAL_ON_INDEX THEN 
+        DBMS_OUTPUT.PUT_LINE('ERROR in adding new ENROLLMENT with ENROLLMENT_ID '|| p_ENROLLMENT_ID ||' there is a duplicate value on existing table');
+        ROLLBACK;
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error ' || SQLERRM);
+        ROLLBACK;
+END create_ENROLLMENT_sp;
+/
+-- Procedure update_enrollment_sp  
+
+CREATE OR REPLACE PROCEDURE update_enrollment_sp
+( 
+  p_enrollment_id  IN ENROLLMENT.ENROLLMENT_ID%TYPE,
+  p_student_id IN ENROLLMENT.STUDENT_ID%TYPE,
+  p_program_id IN ENROLLMENT.PROGRAM_ID%TYPE,
+  p_status IN ENROLLMENT.STATUS%TYPE,
+  p_current_term IN ENROLLMENT.CURRENT_TERM%TYPE,
+  p_enrollment_date IN ENROLLMENT.ENROLL_DATE%TYPE,
+  p_total_fees IN ENROLLMENT.TOTAL_FEES%TYPE
+  )
+  IS
+  CHECK_CONSTRAINT_VIOLATION EXCEPTION;
+  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
+BEGIN
+  UPDATE ENROLLMENT
+  SET student_id = p_student_id, program_id = p_program_id, status = p_status, current_term = p_current_term,
+  enroll_date = p_enrollment_date,total_fees = p_total_fees
+  WHERE ENROLLMENT_ID = p_enrollment_id;
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_id || ' succesfully update the information on the system.');
+EXCEPTION
+  WHEN CHECK_CONSTRAINT_VIOLATION THEN
+  DBMS_OUTPUT.PUT_LINE('Create Enrollment failed due to check constraint violation!!!!!');
+  ROLLBACK;
+  WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
+  ROLLBACK;
+END update_enrollment_sp;
+/
+-- Procedure that creates a new student 
+
+CREATE OR REPLACE PROCEDURE create_student_sp
+( 
+    p_student_first_name IN STUDENT.STUDENT_FIRST_NAME%TYPE,
+    p_student_middle_name IN STUDENT.STUDENT_MIDDLE_NAME%TYPE,
+    p_student_last_name IN STUDENT.STUDENT_LAST_NAME%TYPE,
+    p_telephone IN STUDENT.TELEPHONE%TYPE,
+    p_email IN STUDENT.EMAIL%TYPE,
+    p_address IN STUDENT.ADDRESS%TYPE,
+    p_province IN STUDENT.PROVINCE%TYPE,
+    p_country IN STUDENT.COUNTRY%TYPE,
+    p_city IN STUDENT.CITY%TYPE,
+    p_zipCode IN STUDENT.ZIP_CODE%TYPE,
+    p_isDomestic IN STUDENT.IS_DOMESTIC%TYPE,
+    p_identityNo IN STUDENT.IDENTITY_NO%TYPE,
+    p_sin IN STUDENT.SIN%TYPE,
+    p_dob IN STUDENT.DOB%TYPE
+  )
+IS
+    p_student_ID NUMBER;
+    CHECK_CONSTRAINT_VIOLATION EXCEPTION;
+  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
+BEGIN
+    p_student_ID := STUDENT_ID_SEQ.NEXTVAL;
+  INSERT INTO STUDENT (STUDENT_ID,STUDENT_FIRST_NAME,STUDENT_MIDDLE_NAME,STUDENT_LAST_NAME,TELEPHONE,EMAIL,
+  ADDRESS,PROVINCE,COUNTRY,CITY,ZIP_CODE,IS_DOMESTIC,IDENTITY_NO,SIN,DOB)
+  VALUES(p_student_ID,p_student_first_name,p_student_middle_name,p_student_last_name,p_telephone,p_email,
+  p_address,p_province,p_country,p_city,p_zipCode,p_isDomestic,p_identityNo,p_sin,p_dob);
+  COMMIT;
+    DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_ID || ' succesfully created to the system.');
+EXCEPTION
+  WHEN DUP_VAL_ON_INDEX THEN 
+    DBMS_OUTPUT.PUT_LINE('ERROR!!!!!!! CANNOT create new student there is a duplicate value on index');
+  ROLLBACK;
+  WHEN CHECK_CONSTRAINT_VIOLATION THEN
+    DBMS_OUTPUT.PUT_LINE('Create Student failed due to check constraint violation!!!!!');
+  ROLLBACK;
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
+  ROLLBACK;
+END create_student_sp;
+/
+-- Procedure update student information on student table
+
+CREATE OR REPLACE PROCEDURE update_student_sp
+( 
+    p_student_id IN STUDENT.STUDENT_ID%TYPE,
+    p_student_first_name IN STUDENT.STUDENT_FIRST_NAME%TYPE,
+    p_student_middle_name IN STUDENT.STUDENT_MIDDLE_NAME%TYPE,
+    p_student_last_name IN STUDENT.STUDENT_LAST_NAME%TYPE,
+    p_telephone IN STUDENT.TELEPHONE%TYPE,
+    p_email IN STUDENT.EMAIL%TYPE,
+    p_sin IN STUDENT.SIN%TYPE,
+    p_dob IN STUDENT.DOB%TYPE
+  )
+  IS
+  CHECK_CONSTRAINT_VIOLATION EXCEPTION;
+  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
+BEGIN
+  UPDATE STUDENT
+  SET STUDENT_FIRST_NAME = p_student_first_name, STUDENT_MIDDLE_NAME = p_student_middle_name, STUDENT_LAST_NAME = p_student_last_name, TELEPHONE = p_telephone,
+  EMAIL = p_email,SIN = p_sin, DOB = p_dob
+  WHERE STUDENT_ID = p_student_id;
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_id || ' succesfully update the information on the system.');
+EXCEPTION
+  WHEN CHECK_CONSTRAINT_VIOLATION THEN
+  DBMS_OUTPUT.PUT_LINE('Create Student failed due to check constraint violation!!!!!');
+  ROLLBACK;
+  WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
+  ROLLBACK;
+END update_student_sp;
+/  
+--///////////////////////////FUNCTIONS ///////////////////////////////////
+
+/* 
+    This function will calculate the student fees.
+    It receives two parameters:
+    @student_id: the student id
+    @program_id: the program id
+    It calculates the fees based on the student.is_domestic value
+    if it is true, it will get the fee from program and return it as it is.
+    if it is false, it will get the fee from program and multiply it by 3 (multiply factor)
+    if the values for student_id or program_id are not valid, it will return 0
+*/
+create or replace FUNCTION get_fees (student_id_prt student.student_id%TYPE, 
+                                    program_id_prt program.program_id%TYPE)
+    RETURN NUMBER
+IS
+    lv_is_domestic              NUMBER;
+    lv_program_fees             NUMBER;
+    lv_total_fees               NUMBER;
+    lv_multiplication_factor    NUMBER:=3;
+BEGIN
+    -- get the is_domestic (true=1 or false=0)
+    SELECT  is_domestic
+        INTO    lv_is_domestic
+        FROM    student
+        WHERE   student_id=student_id_prt;
+    -- get the program fees
+    SELECT fees
+        INTO lv_program_fees
+        FROM program
+        WHERE program_id = program_id_prt;
+    -- calculate the total_fees according to domestic
+    IF (lv_is_domestic = 0) THEN
+        lv_total_fees := lv_program_fees * lv_multiplication_factor;
+        DBMS_OUTPUT.PUT_LINE('calculated intl fee: ' || lv_total_fees);
+        RETURN lv_total_fees;
+    ELSIF (lv_is_domestic = 1) THEN
+        lv_total_fees := lv_program_fees;
+        DBMS_OUTPUT.PUT_LINE('calculated dmst fee: ' || lv_total_fees);
+        RETURN lv_total_fees;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Incorrect student or program data specified');
+        RETURN null;
+    END IF;    
+    exception
+      when no_data_found 
+      then DBMS_OUTPUT.PUT_LINE('SQL DATA NOT FOUND');
+      RETURN lv_total_fees;
+END;
+/
+
+/*
+This function verifies if there are available seats in the section.
+It receives one parameter:
+@section_id: the section id
+It returns true (1) if there are available seats, false (0) otherwise
+*/
+
+
+CREATE OR REPLACE FUNCTION check_capacity(section_id_prt  section.section_id%TYPE)
+    RETURN NUMBER
+IS
+    lv_capacity_available   NUMBER;
+    lv_section_ocupancy     section.section_id%TYPE;
+    lv_capacity             section.capacity%TYPE;
+    lv_availability        NUMBER;
+BEGIN
+    --get the ocupancy of a section
+    SELECT      COUNT(section_id)
+    INTO        lv_section_ocupancy
+    FROM        section_enrollment TAB1
+    WHERE       section_id=section_id_prt;
+    -- get total capacity
+    SELECT      capacity
+    INTO        lv_capacity
+    FROM        section
+    WHERE       section_id=section_id_prt;
+    
+    IF (lv_section_ocupancy<=lv_capacity) THEN
+        lv_availability:=lv_capacity-lv_section_ocupancy;
+        dbms_output.put_line('There is availability '||lv_availability);
+        lv_capacity_available:=1;
+    RETURN lv_capacity_available;
+    ELSE
+        dbms_output.put_line('There is not availability '||lv_availability);
+        lv_capacity_available:=0;
+    RETURN lv_capacity_available;
+    END IF;
+    
+    EXCEPTION 
+        WHEN no_data_found THEN
+        dbms_output.put_line('You are looking for a not available section');
+        RETURN null;
+END;
+/
+
+--///////////////////////////TRIGGERS ///////////////////////////////////
+
+create or replace TRIGGER update_enrollment_trg
+BEFORE UPDATE ON ENROLLMENT
+FOR EACH ROW
+BEGIN
+INSERT INTO ENROLLMENT_HISTORY VALUES(ENROLLMENTHISTORY_ID_SEQ.NEXTVAL, :OLD.ENROLLMENT_ID,
+:OLD.STUDENT_ID, :OLD.PROGRAM_ID, :OLD.STATUS, :OLD.CURRENT_TERM, :OLD.ENROLL_DATE, :OLD.TOTAL_FEES,
+'UPDATE',SYSDATE );
+END update_enrollment_trg;
+/
+create or replace TRIGGER delete_enrollment_trg
+BEFORE DELETE ON ENROLLMENT
+FOR EACH ROW
+BEGIN
+INSERT INTO ENROLLMENT_HISTORY VALUES(ENROLLMENTHISTORY_ID_SEQ.NEXTVAL, :OLD.ENROLLMENT_ID,
+:OLD.STUDENT_ID, :OLD.PROGRAM_ID, :OLD.STATUS, :OLD.CURRENT_TERM, :OLD.ENROLL_DATE, :OLD.TOTAL_FEES,
+'DELETE',SYSDATE );
+END delete_enrollment_trg;
+/
+
+-- Views to see and test the database
+
+-- this view shows the numbers of students enrolled in each course by section
+CREATE VIEW section_enrollments_vw 
+AS 
+(
+    SELECT s.section_id, c.course_name, s.section_type, s.capacity, 
+        COUNT(se.enrollment_id) AS registered_students
+    FROM SECTION s
+    JOIN section_enrollment se
+    ON s.section_id = se.section_id
+    JOIN course c
+    ON s.course_id = c.course_id
+    GROUP BY s.section_id, c.course_name, s.section_type, s.capacity
+);
+
+commit;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* 
  * Inserting data into tables
@@ -749,6 +1056,7 @@ INSERT INTO COURSE (COURSE_ID, COURSE_NAME, COURSE_CODE, COURSE_DESC, NO_CREDITS
     VALUES (COURSE_ID_SEQ.nextval,'Dance History and Theory','DANC-205','History the roots of dance', 3);
 INSERT INTO COURSE (COURSE_ID, COURSE_NAME, COURSE_CODE, COURSE_DESC, NO_CREDITS)
     VALUES (COURSE_ID_SEQ.nextval,'Acrobatis 2','DANC-410','Circus skills', 4);
+
 -- sections table samples
 INSERT INTO SECTION (SECTION_ID, SECTION_TYPE, PROFESSOR_NAME, CAPACITY, COURSE_ID)
     VALUES (section_id_seq.nextval, 'ONLINE', 'Dwain Growgane', 20, 10);
@@ -770,29 +1078,30 @@ INSERT INTO SECTION (SECTION_ID, SECTION_TYPE, PROFESSOR_NAME, CAPACITY, COURSE_
     VALUES (section_id_seq.nextval, 'IN PERSON', 'Colly Gamlen', 20, 26);
 INSERT INTO SECTION (SECTION_ID, SECTION_TYPE, PROFESSOR_NAME, CAPACITY, COURSE_ID)
     VALUES (section_id_seq.nextval, 'HYBRID', 'Johnny Leworthy', 20, 28);
+
 -- Enrollment table 
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1310, 451, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1315, 452, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1320, 452, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1325, 453, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1330, 456, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1335, 456, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1340, 453, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1345, 452, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1350, 466, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1355, 452, 0, 1, '1-Sep-2022' );
-INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE)
-    VALUES(enrollment_id_seq.nextval, 1360, 456, 0, 1, '1-Sep-2022' );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1310, 451, 0, 1, '01-Sep-2022', get_fees(1310, 451));
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1315, 452, 0, 1, '05-Sep-2022', get_fees(1315, 452) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1320, 452, 0, 1, '06-Sep-2022', get_fees(1320, 452) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1325, 453, 0, 1, '30-Sep-2022', get_fees(1325, 453) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1330, 456, 0, 1, '30-Sep-2022', get_fees(1330, 456) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1335, 456, 0, 1, '01-Oct-2022', get_fees(1335, 456) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1340, 453, 0, 1, '01-Oct-2022', get_fees(1340, 453) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1345, 452, 0, 1, '11-Nov-2022', get_fees(1345, 452) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1350, 466, 0, 1, '13-Nov-2022', get_fees(1350, 466) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1355, 452, 0, 1, '13-Nov-2022', get_fees(1355, 452) );
+INSERT INTO ENROLLMENT (ENROLLMENT_ID, STUDENT_ID, PROGRAM_ID, STATUS, CURRENT_TERM, ENROLL_DATE, TOTAL_FEES)
+    VALUES(enrollment_id_seq.nextval, 1360, 456, 0, 1, '19-Nov-2022', get_fees(1360, 456) );
 -- SECTION_ENROLLMENT 
 
 INSERT INTO SECTION_ENROLLMENT(section_id, enrollment_id)
@@ -817,231 +1126,3 @@ INSERT INTO SECTION_ENROLLMENT(section_id, enrollment_id)
     VALUES (3,10027);
 INSERT INTO SECTION_ENROLLMENT(section_id, enrollment_id)
     VALUES (3,10030);
-
-
---////////////////////////////PROCEDURES////////////////////////////
-/*
-    This procedure creates a new enrollment for a new student
-    By default the value of status must be 0 (pending)
-*/
--- Procedure Create Enrollment_sp
-
-CREATE OR REPLACE PROCEDURE create_enrollment_sp
-    ( 
-        p_student_id IN ENROLLMENT.STUDENT_ID%TYPE,
-        p_program_id IN ENROLLMENT.PROGRAM_ID%TYPE,
-        p_status IN ENROLLMENT.STATUS%TYPE,
-        p_current_term IN ENROLLMENT.CURRENT_TERM%TYPE,
-        p_enrollment_date IN ENROLLMENT.ENROLL_DATE%TYPE,
-        p_total_fees IN ENROLLMENT.TOTAL_FEES%TYPE
-    )
-IS
-    p_ENROLLMENT_ID NUMBER;
-BEGIN
-    p_ENROLLMENT_ID := ENROLLMENT_ID_SEQ.NEXTVAL;
-    INSERT INTO ENROLLMENT (ENROLLMENT_ID,STUDENT_ID,PROGRAM_ID,STATUS,CURRENT_TERM,ENROLL_DATE,TOTAL_FEES)
-        VALUES(p_ENROLLMENT_ID,p_student_id,p_program_id,p_status,p_current_term,p_enrollment_date,p_total_fees);
-    COMMIT;
-    DBMS_OUTPUT.PUT_LINE('ENROLLMENT ID: ' || p_ENROLLMENT_ID || ', STUDENT ID: ' || p_student_id 
-        ||', PROGRAM ID: ' || p_program_id);
-    DBMS_OUTPUT.PUT_LINE('succesfully inserted into the system. :)');
-    EXCEPTION
-        WHEN DUP_VAL_ON_INDEX THEN 
-        DBMS_OUTPUT.PUT_LINE('ERROR in adding new ENROLLMENT with ENROLLMENT_ID '|| p_ENROLLMENT_ID ||' there is a duplicate value on existing table');
-        ROLLBACK;
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Error ' || SQLERRM);
-        ROLLBACK;
-END create_ENROLLMENT_sp;
-/
--- Procedure update_enrollment_sp  
-
-CREATE OR REPLACE PROCEDURE update_enrollment_sp
-( 
-  p_enrollment_id  IN ENROLLMENT.ENROLLMENT_ID%TYPE,
-  p_student_id IN ENROLLMENT.STUDENT_ID%TYPE,
-  p_program_id IN ENROLLMENT.PROGRAM_ID%TYPE,
-  p_status IN ENROLLMENT.STATUS%TYPE,
-  p_current_term IN ENROLLMENT.CURRENT_TERM%TYPE,
-  p_enrollment_date IN ENROLLMENT.ENROLL_DATE%TYPE,
-  p_total_fees IN ENROLLMENT.TOTAL_FEES%TYPE
-  )
-  IS
-  CHECK_CONSTRAINT_VIOLATION EXCEPTION;
-  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
-BEGIN
-  UPDATE ENROLLMENT
-  SET student_id = p_student_id, program_id = p_program_id, status = p_status, current_term = p_current_term,
-  enroll_date = p_enrollment_date,total_fees = p_total_fees
-  WHERE ENROLLMENT_ID = p_enrollment_id;
-  COMMIT;
-  DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_id || ' succesfully update the information on the system.');
-EXCEPTION
-  WHEN CHECK_CONSTRAINT_VIOLATION THEN
-  DBMS_OUTPUT.PUT_LINE('Create Enrollment failed due to check constraint violation!!!!!');
-  ROLLBACK;
-  WHEN OTHERS THEN
-  DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
-  ROLLBACK;
-END update_enrollment_sp;
-/
--- Procedure that creates a new student 
-
-CREATE OR REPLACE PROCEDURE create_student_sp
-( 
-    p_student_first_name IN STUDENT.STUDENT_FIRST_NAME%TYPE,
-    p_student_middle_name IN STUDENT.STUDENT_MIDDLE_NAME%TYPE,
-    p_student_last_name IN STUDENT.STUDENT_LAST_NAME%TYPE,
-    p_telephone IN STUDENT.TELEPHONE%TYPE,
-    p_email IN STUDENT.EMAIL%TYPE,
-    p_address IN STUDENT.ADDRESS%TYPE,
-    p_province IN STUDENT.PROVINCE%TYPE,
-    p_country IN STUDENT.COUNTRY%TYPE,
-    p_city IN STUDENT.CITY%TYPE,
-    p_zipCode IN STUDENT.ZIP_CODE%TYPE,
-    p_isDomestic IN STUDENT.IS_DOMESTIC%TYPE,
-    p_identityNo IN STUDENT.IDENTITY_NO%TYPE,
-    p_sin IN STUDENT.SIN%TYPE,
-    p_dob IN STUDENT.DOB%TYPE
-  )
-IS
-    p_student_ID NUMBER;
-    CHECK_CONSTRAINT_VIOLATION EXCEPTION;
-  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
-BEGIN
-    p_student_ID := STUDENT_ID_SEQ.NEXTVAL;
-  INSERT INTO STUDENT (STUDENT_ID,STUDENT_FIRST_NAME,STUDENT_MIDDLE_NAME,STUDENT_LAST_NAME,TELEPHONE,EMAIL,
-  ADDRESS,PROVINCE,COUNTRY,CITY,ZIP_CODE,IS_DOMESTIC,IDENTITY_NO,SIN,DOB)
-  VALUES(p_student_ID,p_student_first_name,p_student_middle_name,p_student_last_name,p_telephone,p_email,
-  p_address,p_province,p_country,p_city,p_zipCode,p_isDomestic,p_identityNo,p_sin,p_dob);
-  COMMIT;
-    DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_ID || ' succesfully created to the system.');
-EXCEPTION
-  WHEN DUP_VAL_ON_INDEX THEN 
-    DBMS_OUTPUT.PUT_LINE('ERROR!!!!!!! CANNOT create new student there is a duplicate value on index');
-  ROLLBACK;
-  WHEN CHECK_CONSTRAINT_VIOLATION THEN
-    DBMS_OUTPUT.PUT_LINE('Create Student failed due to check constraint violation!!!!!');
-  ROLLBACK;
-  WHEN OTHERS THEN
-    DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
-  ROLLBACK;
-END create_student_sp;
-/
--- Procedure update student information on student table
-
-CREATE OR REPLACE PROCEDURE update_student_sp
-( 
-    p_student_id IN STUDENT.STUDENT_ID%TYPE,
-    p_student_first_name IN STUDENT.STUDENT_FIRST_NAME%TYPE,
-    p_student_middle_name IN STUDENT.STUDENT_MIDDLE_NAME%TYPE,
-    p_student_last_name IN STUDENT.STUDENT_LAST_NAME%TYPE,
-    p_telephone IN STUDENT.TELEPHONE%TYPE,
-    p_email IN STUDENT.EMAIL%TYPE,
-    p_sin IN STUDENT.SIN%TYPE,
-    p_dob IN STUDENT.DOB%TYPE
-  )
-  IS
-  CHECK_CONSTRAINT_VIOLATION EXCEPTION;
-  PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
-BEGIN
-  UPDATE STUDENT
-  SET STUDENT_FIRST_NAME = p_student_first_name, STUDENT_MIDDLE_NAME = p_student_middle_name, STUDENT_LAST_NAME = p_student_last_name, TELEPHONE = p_telephone,
-  EMAIL = p_email,SIN = p_sin, DOB = p_dob
-  WHERE STUDENT_ID = p_student_id;
-  COMMIT;
-  DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_id || ' succesfully update the information on the system.');
-EXCEPTION
-  WHEN CHECK_CONSTRAINT_VIOLATION THEN
-  DBMS_OUTPUT.PUT_LINE('Create Student failed due to check constraint violation!!!!!');
-  ROLLBACK;
-  WHEN OTHERS THEN
-  DBMS_OUTPUT.PUT_LINE('Error' || SQLERRM);
-  ROLLBACK;
-END update_student_sp;
-/  
---///////////////////////////FUNCTIONS ///////////////////////////////////
-
--- function get_fees(student_id, program_id) returns total_fees of type Number
-
-CREATE OR REPLACE FUNCTION get_fees (student_id_prt student.student_id%TYPE, 
-                                    program_id_prt program.program_id%TYPE)
-    RETURN NUMBER
-IS
-    lv_is_domestic              NUMBER;
-    lv_program_fees             NUMBER;
-    lv_total_fees               NUMBER;
-    lv_multiplication_factor    NUMBER:=3;
-BEGIN
-    -- get the is_domestic (true=1 or false=0)
-    SELECT  is_domestic
-        INTO    lv_is_domestic
-        FROM    student
-        WHERE   student_id=student_id_prt;
-    -- get the program fees
-    SELECT fees
-        INTO lv_program_fees
-        FROM program
-        WHERE program_id = program_id_prt;
-    -- calculate the total_fees according to domestic
-    IF (lv_is_domestic = 0) THEN
-        lv_total_fees := lv_program_fees * lv_multiplication_factor;
-    ELSE
-        lv_total_fees := lv_program_fees;
-    END IF;
-    RETURN lv_total_fees;
-END;
-/
--- Check capacity is initialized with section Id and this 
-
-CREATE OR REPLACE FUNCTION check_capacity(section_id_prt  section.section_id%TYPE)
-    RETURN NUMBER
-IS
-    lv_capacity_available   NUMBER;
-    lv_section_ocupancy     section.section_id%TYPE;
-    lv_capacity             section.capacity%TYPE;
-    lv_disponibility        NUMBER;
-BEGIN
-    --get the ocupancy of a section
-    SELECT      COUNT(section_id)
-    INTO        lv_section_ocupancy
-    FROM        section_enrollment TAB1
-    WHERE       section_id=section_id_prt;
-    -- get total capacity
-    SELECT      capacity
-    INTO        lv_capacity
-    FROM        section
-    WHERE       section_id=section_id_prt;
-    
-    IF (lv_section_ocupancy<=lv_capacity) THEN
-    lv_disponibility:=lv_capacity-lv_section_ocupancy;
-    dbms_output.put_line('There is disponibility '||lv_disponibility);
-    lv_capacity_available:=1;
-    RETURN lv_capacity_available;
-    ELSE
-    dbms_output.put_line('There is not disponibility '||lv_disponibility);
-    lv_capacity_available:=0;
-    RETURN lv_capacity_available;
-    END IF;
-END;
-/
-create or replace TRIGGER update_enrollment_trg
-BEFORE UPDATE ON ENROLLMENT
-FOR EACH ROW
-BEGIN
-INSERT INTO ENROLLMENT_HISTORY VALUES(ENROLLMENTHISTORY_ID_SEQ.NEXTVAL, :OLD.ENROLLMENT_ID,
-:OLD.STUDENT_ID, :OLD.PROGRAM_ID, :OLD.STATUS, :OLD.CURRENT_TERM, :OLD.ENROLL_DATE, :OLD.TOTAL_FEES,
-'UPDATE',SYSDATE );
-END update_enrollment_trg;
-/
-create or replace TRIGGER delete_enrollment_trg
-BEFORE DELETE ON ENROLLMENT
-FOR EACH ROW
-BEGIN
-INSERT INTO ENROLLMENT_HISTORY VALUES(ENROLLMENTHISTORY_ID_SEQ.NEXTVAL, :OLD.ENROLLMENT_ID,
-:OLD.STUDENT_ID, :OLD.PROGRAM_ID, :OLD.STATUS, :OLD.CURRENT_TERM, :OLD.ENROLL_DATE, :OLD.TOTAL_FEES,
-'DELETE',SYSDATE );
-END delete_enrollment_trg;
-/
-
-commit;
