@@ -1,4 +1,4 @@
--- drop Sequences 
+-- drop Sequences
 DROP SEQUENCE COURSE_ID_SEQ;
 DROP SEQUENCE DEPARTMENT_ID_SEQ;
 DROP SEQUENCE ENROLLMENT_ID_SEQ;
@@ -25,6 +25,7 @@ DROP PROCEDURE update_enrollment_sp;
 DROP PROCEDURE create_student_sp;
 DROP PROCEDURE update_student_sp;
 
+-- Drop functions
 DROP FUNCTION get_fees;
 DROP FUNCTION check_capacity;
 
