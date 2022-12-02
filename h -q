@@ -1,0 +1,305 @@
+[33mcommit 390cfe8c56553aefe4c7be34e5f78bf7a50b83fa[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Fri Dec 2 16:17:14 2022 -0500
+
+    fx get_fees: added exception for NO Values, modified IF, tested and added it to script_create; fx check_capacity: modified variable names, added comments, added return to exception message, tested and added to script_create
+
+[33mcommit 141874615160dace5c8d08718d5e283d9dd138f7[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Fri Dec 2 15:57:34 2022 -0500
+
+    add global variable to package
+
+[33mcommit 9417782259ed3d7b060c94b896cdd585aa2e41c5[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Fri Dec 2 15:56:03 2022 -0500
+
+    add global variable to package
+
+[33mcommit ef792ca2e790d7b216cb1ad8d30d47be4ff65c1f[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Fri Dec 2 15:21:05 2022 -0500
+
+    Update the Documentation
+
+[33mcommit 61c7010f93baa532c29b3a89245edb6d78758477[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Fri Dec 2 01:39:13 2022 -0500
+
+    create student procedure with cursor
+
+[33mcommit 883eec5e65011480eb1387da2b9490de5f5cbc86[m
+Author: Basstian555 <sebasjacomemc@gmail.com>
+Date:   Fri Dec 2 01:26:13 2022 -0500
+
+    modify function with exceptions
+
+[33mcommit b3d5642ecd9093dbcb9f4dd74dd66d2bf1dd970b[m
+Merge: c9f6051 c0b08f4
+Author: Basstian555 <sebasjacomemc@gmail.com>
+Date:   Fri Dec 2 01:18:24 2022 -0500
+
+    Merge branch 'main' of https://github.com/thecentennialgigateam/backend-magic
+
+[33mcommit c0b08f4f669713e30243c0048a183f5d3d0e1756[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Fri Dec 2 01:15:21 2022 -0500
+
+    removed test
+
+[33mcommit 8ebf5d32c5fce0a787742119e527d54a8e0b0d0d[m
+Merge: ea8ef40 b8e9eb8
+Author: Alejandro A <ale@doges.dev>
+Date:   Fri Dec 2 01:13:25 2022 -0500
+
+    resolving conflict
+
+[33mcommit ea8ef405aac218e45d7f241dc30d216c66dbecc8[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Fri Dec 2 00:28:39 2022 -0500
+
+    starting improving deletion of tables in create database script
+
+[33mcommit b8e9eb8b4443fdd2a1824581e9dffe18cb96adf7[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Thu Dec 1 23:31:20 2022 -0500
+
+    add cursor to update student procedure
+
+[33mcommit c9f6051b628955fd9e55ef15ab407d8245ab9d51[m
+Author: Basstian555 <sebasjacomemc@gmail.com>
+Date:   Thu Dec 1 20:32:34 2022 -0500
+
+    created package enrollment
+
+[33mcommit d92ea9176a367bd396be69d6f1d22270b3cde996[m
+Author: ChristyJose08 <119276072+ChristyJose08@users.noreply.github.com>
+Date:   Thu Dec 1 19:19:27 2022 -0500
+
+    clean up done - procedure for update enrollment is removed
+
+[33mcommit 430dfecdb25f463b6e4aa2bacd6d040d914108dc[m
+Author: Basstian555 <sebasjacomemc@gmail.com>
+Date:   Thu Dec 1 18:17:38 2022 -0500
+
+    created package
+
+[33mcommit d87e52ab48588890d3062c63c2425a4eb17f0aed[m
+Author: Basstian555 <sebasjacomemc@gmail.com>
+Date:   Thu Dec 1 17:47:38 2022 -0500
+
+    updated create date base and deleted duplicates
+
+[33mcommit 1ea1797def057deef1e0bf7d0a6be67645c03fcc[m
+Author: Basstian555 <119086033+Basstian555@users.noreply.github.com>
+Date:   Thu Dec 1 17:13:17 2022 -0500
+
+    Add files via upload
+
+[33mcommit 67a0a0a95fb70938a0b2456305b2fd5bdeb17ab4[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Thu Dec 1 16:42:04 2022 -0500
+
+    add delete trigger
+
+[33mcommit 78686aa8429b82bcfb3b8b9ff3cc8816e88ec5bd[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Thu Dec 1 16:39:54 2022 -0500
+
+    no delete cascade on enrollment histrory table
+
+[33mcommit 028b38016927057f81535331ea778c18ab827a5c[m
+Author: Basstian555 <119086033+Basstian555@users.noreply.github.com>
+Date:   Thu Dec 1 15:34:14 2022 -0500
+
+    Add files via upload
+
+[33mcommit 1bfe58ea1e49bd68c34bbdf6bf42125ab347cdd5[m
+Author: Basstian555 <119086033+Basstian555@users.noreply.github.com>
+Date:   Thu Dec 1 12:04:10 2022 -0500
+
+    Add files via upload
+
+[33mcommit 94a44c3eddef8e9b24570664123c8b2bfaa6db3f[m
+Author: ChristyJose08 <119276072+ChristyJose08@users.noreply.github.com>
+Date:   Thu Dec 1 11:29:37 2022 -0500
+
+    Update update_enrollment_sp.sql
+    
+    done some changes
+
+[33mcommit 3fd78cfd5a4741425d68af4737d106fc79887da6[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Thu Dec 1 00:50:12 2022 -0500
+
+    add update trigger and test for update trigger
+
+[33mcommit 6fded259d886283f7a09d3e7461cd57ab673cb18[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Thu Dec 1 00:03:29 2022 -0500
+
+    add new Enrollment_History and Section_Course table
+
+[33mcommit f094cf828eecda04f93c751e04f0d2081d660b73[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Wed Nov 30 23:25:33 2022 -0500
+
+    create new table called ENROLLMENT_HISTORY and sequence for that
+
+[33mcommit bd9568404fb0283f7520456f50b4540df62ed98a[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Wed Nov 30 23:08:51 2022 -0500
+
+    reorder the drop table in script_create_table.sql
+
+[33mcommit be72950b4333b57ace9245da65909c44d391ad29[m
+Author: ChristyJose08 <119276072+ChristyJose08@users.noreply.github.com>
+Date:   Wed Nov 30 20:12:44 2022 -0500
+
+    Some minor changes done in documentation
+
+[33mcommit 7cfaa5859b02e26f68116eb772995aa09c685767[m
+Author: ChristyJose08 <119276072+ChristyJose08@users.noreply.github.com>
+Date:   Wed Nov 30 19:51:25 2022 -0500
+
+    Add files via upload
+
+[33mcommit ad0d1b5f578beff07bc92c0aec530820c9d5793c[m
+Author: ChristyJose08 <119276072+ChristyJose08@users.noreply.github.com>
+Date:   Wed Nov 30 19:44:48 2022 -0500
+
+    Update create_enrollment_sp.sql
+
+[33mcommit 9046b13822b0c4c39d1be6817165fef4c13e93fc[m
+Author: Basstian555 <119086033+Basstian555@users.noreply.github.com>
+Date:   Wed Nov 30 16:57:36 2022 -0500
+
+    Add files via upload
+
+[33mcommit 67ad34c3122559676270706aff77e9e364b2492f[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Wed Nov 30 15:39:44 2022 -0500
+
+    formatting create student procedure
+
+[33mcommit b358e2910597ec429b7eb722e501619ccbadd83d[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Wed Nov 30 15:37:55 2022 -0500
+
+    formatting create and update student procedure and add test for both procedure
+
+[33mcommit c69fb994bae01e141fedbac24f4d01a3e7a7c6dd[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Wed Nov 30 15:24:46 2022 -0500
+
+    Add Documentation for submission
+
+[33mcommit 79d0397f130d2fbbf0f1cd6fd59dcd263e140654[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Wed Nov 30 00:31:30 2022 -0500
+
+    script_create: section_enrollment: link table created; test_enrollment: test queries; function check_section_capacity: added basic logic to be developed
+
+[33mcommit 6c4569018381ce16552f9cf0ea2dc1ee3935390f[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Tue Nov 29 23:07:54 2022 -0500
+
+    get_fees_fucntion: added program_fees parameter, completed logic, and tested it. test_get_fees: split the function and the test into a new file. create_enrollment_sp: minor formatting changes and tested OK
+
+[33mcommit 89c4c2d6d3dea47ed16d8c70088729af55f89189[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Tue Nov 29 19:43:05 2022 -0500
+
+    created folders for functions and procedures. Moved the code to their respective folders. Added function get_fees_function.sql created by Sebas
+
+[33mcommit c24e8632015b218c06f26c0ef9fb758f6e69628a[m
+Author: sorada <52327484+sorada1111@users.noreply.github.com>
+Date:   Mon Nov 28 23:33:11 2022 -0500
+
+    add update student procesure and change exception for create student procedure
+
+[33mcommit f33fdc48b42dfc46728e1c08634f779e38d3d70c[m
+Author: ChristyJose08 <119276072+ChristyJose08@users.noreply.github.com>
+Date:   Mon Nov 28 22:40:39 2022 -0500
+
+    Add files via upload
+    
+    procedure for inserting data into enrollment table, updating the status also handled expected general exception
+
+[33mcommit b9f23af5fd1cfad821b7292809f8366f721210a8[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Mon Nov 28 06:28:24 2022 -0500
+
+    put together the create data sql inside script_create_database
+
+[33mcommit fc90db83574bdc8e67de179d58a6102ff5d19e89[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Mon Nov 28 06:15:07 2022 -0500
+
+    added credits to the programs
+
+[33mcommit 78157b59cc68eeab3a44ee77b51ababf3b66436d[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Mon Nov 28 06:04:42 2022 -0500
+
+    Created program_data, department_data SQL scritps to insert data. Created sql_data_generator to convert from CSV data to SQL statements using formulas. Tested and passed tests so far
+
+[33mcommit ef1cd591ede36daf756595373c92da498c0e76da[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Mon Nov 28 04:33:44 2022 -0500
+
+    Student Data: replaced id with nextval, changed student names to avoid problems with accents and tildes. create tables: removed unnecesary section col from course, fixed minor details in the script
+
+[33mcommit 408c92137f3d07101c1104d9da33eb3c9257b5e5[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Mon Nov 28 04:32:08 2022 -0500
+
+    updated gitignore
+
+[33mcommit 769d0d24d6ef02e607ff3c80c05cf84ed0c73bc2[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Sun Nov 27 22:40:03 2022 -0500
+
+    script_create: added more constraints, indexes, and sequences. Created drop sequences. This will be later unified into one big script
+
+[33mcommit ca63b42df3df8c166b25076f4ec9f1cc124b6a86[m
+Author: Alejandro Acevedo <dogedrive@Alejandros-MacBook-Air-2.local>
+Date:   Fri Nov 25 20:05:53 2022 -0500
+
+    tested code: OK. added commit statement at the end
+
+[33mcommit ae40405aeb0e95ce8bae927875926d69921a81ec[m
+Author: Alejandro Acevedo <dogedrive@Alejandros-MacBook-Air-2.local>
+Date:   Fri Nov 25 19:37:28 2022 -0500
+
+    modified create script, added new territories to constraint. Created student data to populate the db
+
+[33mcommit 334846546563f8750041409f33a32a88f9700623[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Fri Nov 25 17:57:33 2022 -0500
+
+    put the create script into one file
+
+[33mcommit 9b5d4b3dffe480766864f56e5be10f8c95354245[m
+Author: Alejandro Acevedo <dogedrive@Alejandros-MacBook-Air-2.local>
+Date:   Fri Nov 25 17:54:56 2022 -0500
+
+    created script with constraints and checks by Sebas
+
+[33mcommit f85e911ce8985bb31ec9b8077ffb68de1c403d89[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Wed Nov 23 03:51:40 2022 -0500
+
+    changes to readme.md
+
+[33mcommit 09e557aa4005aa062ca89906fd0b684f96dc3163[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Wed Nov 23 03:48:41 2022 -0500
+
+    first commit. Updated readme.md, added ERD diagram, build database script
+
+[33mcommit 1953c35f00e494f3948f49e99ea9ad752bf22b87[m
+Author: Alejandro A <ale@doges.dev>
+Date:   Wed Nov 23 03:28:54 2022 -0500
+
+    Initial commit
