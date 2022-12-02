@@ -1,4 +1,5 @@
 CREATE OR REPLACE PACKAGE enrollment_pkg IS
+    pv_enrollment VARCHAR2(20);
     PROCEDURE create_enrollment_sp
         (   p_student_id IN ENROLLMENT.STUDENT_ID%TYPE,
             p_program_id IN ENROLLMENT.PROGRAM_ID%TYPE,
