@@ -16,7 +16,6 @@ create or replace PROCEDURE update_student_sp
   CHECK_CONSTRAINT_VIOLATION EXCEPTION;
   PRAGMA EXCEPTION_INIT(CHECK_CONSTRAINT_VIOLATION, -2290);
 BEGIN
-    
     FOR rec in cur_student
     LOOP
     select count(*) into chk_student
@@ -33,6 +32,7 @@ BEGIN
   COMMIT;
   DBMS_OUTPUT.PUT_LINE('Student ID: ' || p_student_id || ' succesfully update the information on the system.');
 END IF;
+ EXIT WHEN chk_student > 0;
 END LOOP;
 EXCEPTION
   WHEN CHECK_CONSTRAINT_VIOLATION THEN
