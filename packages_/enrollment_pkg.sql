@@ -245,4 +245,13 @@ BEGIN
     END IF;
     END check_capacity;
 END;
+/
 
+---Test package
+BEGIN
+enrollment_pkg.pv_enrollment := 'Sebas';
+END;
+/
+BEGIN 
+DBMS_OUTPUT.PUT_LINE(enrollment_pkg.pv_enrollment);
+END;
