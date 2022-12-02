@@ -22,7 +22,7 @@ DECLARE
 
 -- Test update student   
 DECLARE
-    lv_student_id STUDENT.STUDENT_ID%TYPE:= 2530;
+    lv_student_id STUDENT.STUDENT_ID%TYPE:= 1000;
     lv_student_first_name STUDENT.STUDENT_FIRST_NAME%TYPE := 'NANA';
     lv_student_middle_name STUDENT.STUDENT_MIDDLE_NAME%TYPE := '';
     lv_student_last_name STUDENT.STUDENT_LAST_NAME%TYPE := 'LULU';
@@ -33,4 +33,8 @@ DECLARE
 BEGIN
     update_student_sp(lv_student_id,lv_student_first_name,lv_student_middle_name,lv_student_last_name
     ,lv_telephone,lv_email,lv_sin,lv_dob);
-END;  
+  END;
+
+
+select count(*) 
+    from STUDENT where STUDENT_ID = 70000000;
