@@ -83,3 +83,8 @@ SELECT * FROM student;
 
 -- view with the section enrollments
 SELECT * FROM section_enrollments_vw;
+
+-- Test procedure from package Increase FEES of programs
+BEGIN
+    enrollment_pkg.increase_program_fees;
+END;
