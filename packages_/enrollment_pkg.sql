@@ -51,13 +51,15 @@ CREATE OR REPLACE PACKAGE enrollment_pkg IS
             p_sin IN STUDENT.SIN%TYPE,
             p_dob IN STUDENT.DOB%TYPE
           );
-          FUNCTION get_fees (student_id_prt student.student_id%TYPE, 
-                             program_id_prt program.program_id%TYPE)
-          RETURN NUMBER;
+
+        -- functions header
+        FUNCTION get_fees (student_id_prt student.student_id%TYPE, 
+                            program_id_prt program.program_id%TYPE)
+        RETURN NUMBER;
           
-          FUNCTION check_capacity(section_id_prt  section.section_id%TYPE)
-          RETURN NUMBER;
-          
+        FUNCTION check_capacity(section_id_prt  section.section_id%TYPE)
+        RETURN NUMBER;
+        
         END;
 /        
 CREATE OR REPLACE PACKAGE BODY enrollment_pkg IS
@@ -227,8 +229,20 @@ CREATE OR REPLACE PACKAGE BODY enrollment_pkg IS
       ROLLBACK;
     END update_student_sp;
     
+    -- function declarations
+
+    /* 
+    This function will calculate the student fees.
+    It receives two parameters:
+    @student_id: the student id
+    @program_id: the program id
+    It calculates the fees based on the student.is_domestic value
+    if it is true, it will get the fee from program and return it as it is.
+    if it is false, it will get the fee from program and multiply it by 3 (multiply factor)
+    if the values for student_id or program_id are not valid, it will return 0
+    */
     FUNCTION get_fees (student_id_prt student.student_id%TYPE, 
-                                    program_id_prt program.program_id%TYPE)
+                                        program_id_prt program.program_id%TYPE)
         RETURN NUMBER
     IS
         lv_is_domestic              NUMBER;
@@ -249,41 +263,66 @@ CREATE OR REPLACE PACKAGE BODY enrollment_pkg IS
         -- calculate the total_fees according to domestic
         IF (lv_is_domestic = 0) THEN
             lv_total_fees := lv_program_fees * lv_multiplication_factor;
-        ELSE
+            DBMS_OUTPUT.PUT_LINE('calculated intl fee: ' || lv_total_fees);
+            RETURN lv_total_fees;
+        ELSIF (lv_is_domestic = 1) THEN
             lv_total_fees := lv_program_fees;
-        END IF;
+            DBMS_OUTPUT.PUT_LINE('calculated dmst fee: ' || lv_total_fees);
+            RETURN lv_total_fees;
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Incorrect student or program data specified');
+            RETURN null;
+        END IF;    
+        exception
+        when no_data_found 
+        then DBMS_OUTPUT.PUT_LINE('SQL DATA NOT FOUND');
         RETURN lv_total_fees;
-    END get_fees;
-    FUNCTION check_capacity(section_id_prt  section.section_id%TYPE)
-    RETURN NUMBER
-IS
-    lv_capacity_available   NUMBER;
-    lv_section_ocupancy     section.section_id%TYPE;
-    lv_capacity             section.capacity%TYPE;
-    lv_disponibility        NUMBER;
-BEGIN
-    --get the ocupancy of a section
-    SELECT      COUNT(section_id)
-    INTO        lv_section_ocupancy
-    FROM        section_enrollment TAB1
-    WHERE       section_id=section_id_prt;
-    -- get total capacity
-    SELECT      capacity
-    INTO        lv_capacity
-    FROM        section
-    WHERE       section_id=section_id_prt;
+    END;
+
     
-    IF (lv_section_ocupancy<=lv_capacity) THEN
-    lv_disponibility:=lv_capacity-lv_section_ocupancy;
-    dbms_output.put_line('There is disponibility '||lv_disponibility);
-    lv_capacity_available:=1;
-    RETURN lv_capacity_available;
-    ELSE
-    dbms_output.put_line('There is not disponibility '||lv_disponibility);
-    lv_capacity_available:=0;
-    RETURN lv_capacity_available;
-    END IF;
-    END check_capacity;
+    /*
+    This function verifies if there are available seats in the section.
+    It receives one parameter:
+    @section_id: the section id
+    It returns true (1) if there are available seats, false (0) otherwise
+    */
+
+
+    FUNCTION check_capacity(section_id_prt  section.section_id%TYPE)
+        RETURN NUMBER
+    IS
+        lv_capacity_available   NUMBER;
+        lv_section_ocupancy     section.section_id%TYPE;
+        lv_capacity             section.capacity%TYPE;
+        lv_availability        NUMBER;
+    BEGIN
+        --get the ocupancy of a section
+        SELECT      COUNT(section_id)
+        INTO        lv_section_ocupancy
+        FROM        section_enrollment TAB1
+        WHERE       section_id=section_id_prt;
+        -- get total capacity
+        SELECT      capacity
+        INTO        lv_capacity
+        FROM        section
+        WHERE       section_id=section_id_prt;
+        
+        IF (lv_section_ocupancy<=lv_capacity) THEN
+            lv_availability:=lv_capacity-lv_section_ocupancy;
+            dbms_output.put_line('There is availability '||lv_availability);
+            lv_capacity_available:=1;
+        RETURN lv_capacity_available;
+        ELSE
+            dbms_output.put_line('There is not availability '||lv_availability);
+            lv_capacity_available:=0;
+        RETURN lv_capacity_available;
+        END IF;
+        
+        EXCEPTION 
+            WHEN no_data_found THEN
+            dbms_output.put_line('You are looking for a not available section');
+            RETURN null;
+    END;
 END;
 /
 
